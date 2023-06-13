@@ -2,38 +2,15 @@
 {
     internal class Algorithm
     {
-        public static bool IsAnagram(string firstWord, string secondWord)
+        public static IEnumerable<string[]> FindAnagrams(IEnumerable<string> candidates)
         {
-            if (IsValid(firstWord, secondWord))
-                return false;
-            char[] s1Array = firstWord.ToLower().ToCharArray();
-            char[] s2Array = secondWord.ToLower().ToCharArray();
+            if (null == candidates)
+                throw new ArgumentNullException(nameof(candidates));
 
-            Array.Sort(s1Array);
-            Array.Sort(s2Array);
-
-            firstWord = new string(s1Array);
-            secondWord = new string(s2Array);
-
-            return firstWord == secondWord;
-        }
-
-        public static bool IsAnagram2(string firstWord, string secondWord)
-        {
-            if (IsValid(firstWord, secondWord))
-                return false;
-            string firstWordSorted = string.Concat(firstWord.OrderBy(c => c));
-            string secondWordSorted = string.Concat(secondWord.OrderBy(c => c));
-            return firstWordSorted == secondWordSorted;
-        }
-
-        public static bool IsValid(string firstWord, string secondWord)
-        {
-            if (firstWord.Length != secondWord.Length)
-                return false;
-            if (firstWord == secondWord)
-                return false;
-            return true;
+            return candidates
+              .GroupBy(word => string.Concat(word.OrderBy(c => c)))
+              .Where(group => group.Count() > 1)
+              .Select(group => group.OrderBy(word => word).ToArray());
         }
     }
 }
